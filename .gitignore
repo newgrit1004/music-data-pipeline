@@ -3,6 +3,7 @@
 *.wav
 .venv/
 playlist_download/
+TTS_training_data/
 
 #spleeter
 pretrained_models/
