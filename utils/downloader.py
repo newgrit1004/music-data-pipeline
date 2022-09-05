@@ -19,11 +19,30 @@ class YoutubeSongDownloader:
         Args:
             download_folder_name (str): a folder path where a song will be downloaded.
         """
-        download_path = makedirs(os.getcwd(), download_folder_name)
-        self.yt.streams.filter(only_audio=True).first().download(f'./{download_path}')
+        _ = makedirs(download_folder_name)
+        self.yt.streams.filter(only_audio=True).first().download(f'./{download_folder_name}')
         print('Single song downloaded complete')
 
 
+class YoutubeVideoDownloader:
+    """Download a single video from youtube url.
+
+    Attributes:
+        self.yt (Youtube): a Youtube object
+    """
+    def __init__(self, url:str):
+        """Inits YoutubeVideoDownloader with youtube url."""
+        self.yt = YouTube(url)
+        self.yt.streams.filter(progressive=True, res='720p').all()
+    def download(self, download_folder_name:str):
+        """Download a song from the url.
+
+        Args:
+            download_folder_name (str): a folder path where a video will be downloaded.
+        """
+        _ = makedirs(download_folder_name)
+        self.yt.streams.filter(progressive=True, res='720p').first().download(f'{download_folder_name}')
+        print('Single song downloaded complete')
 
 class PlaylistDownloader:
     """Download all songs of the playlist from youtube playlist url.
@@ -45,7 +64,7 @@ class PlaylistDownloader:
             VideoUnavailable : loading single video error.
             KeyError : 'streamingData' for video removed for violating youtube's terms of service.
         """
-        download_path = makedirs(os.getcwd(), download_folder_name)
+        _ = makedirs(download_folder_name)
         for url in self.pl.video_urls:
             try:
                 video = YouTube(url)
@@ -53,6 +72,6 @@ class PlaylistDownloader:
                 pass
             else:
                 try:
-                    video.streams.filter(only_audio=True).first().download(f'./{download_path}')
+                    video.streams.filter(only_audio=True).first().download(f'./{download_folder_name}')
                 except KeyError:
                     pass

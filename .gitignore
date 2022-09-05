@@ -4,6 +4,11 @@
 .venv/
 playlist_download/
 TTS_training_data/
+*.mp4
+*.ipynb
+*.csv
+*.html
+scenes/
 
 #spleeter
 pretrained_models/

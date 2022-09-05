@@ -91,6 +91,12 @@ def nonsilence_segmentation(vocal_wav:str):
     Args:
         wav_file (str): a single wav file path.
 
+    Note:
+        librosa library does not supports mp3 files, so the format of exported files is wav.
+        When reading mp3 file using librosa, a warning message is below.
+        /usr/local/lib/python3.7/site-packages/librosa/core/audio.py:161:
+        UserWarning: PySoundFile failed. Trying audioread instead. warnings.warn('PySoundFile failed. Trying audioread instead.')
+
     TODO:
         * os -> pathlib
         * use config class later
@@ -107,5 +113,5 @@ def nonsilence_segmentation(vocal_wav:str):
         if json['tag'] == 'nonsilence':
             start = json['start']
             end = json['end']
-            file_name = f'{song_name}_{start}_{end}.mp3'
-            normalized_sound[start:end].export(os.path.join(saved_path, file_name))
+            file_name = f'{song_name}_{start}_{end}.wav'
+            normalized_sound[start:end].export(os.path.join(saved_path, file_name), format='wav')

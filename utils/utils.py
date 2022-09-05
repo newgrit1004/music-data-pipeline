@@ -1,22 +1,15 @@
-import os
+from pathlib import Path, PosixPath
 
-def makedirs(current_path:str, dir_name:str) -> str:
+def makedirs(dir_name:str) -> PosixPath:
     """Generate a new directory and return its folder name.
 
     Args:
-        sound (AudioSegment): an AudioSegment object
-        target_dBFS (float): if target_dbFS is lower than 0, the sound will be lowered.
-                                Otherwise, the sound will be raised.
+        dir_name (str): directory name
 
     Returns:
-        AudioSegment object : raised or lowered determined by target_dBFS
+        PosixPath
     """
-    new_path = os.path.join(current_path, dir_name)
-    try:
-        os.makedirs(new_path)
-    except OSError:
-        if not os.path.isdir(new_path):
-            raise
-
-    return new_path.split('/')[-1]
+    new_path = Path(__file__).parents[1] / dir_name
+    new_path.mkdir()
+    return new_path
 
