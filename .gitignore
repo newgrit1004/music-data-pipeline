@@ -9,6 +9,7 @@ TTS_training_data/
 *.csv
 *.html
 scenes/
+chromedriver
 
 #spleeter
 pretrained_models/
