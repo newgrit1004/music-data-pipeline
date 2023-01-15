@@ -18,7 +18,7 @@
 
 구상하고 있는 전체 파이프라인을 pseudo-code로 표현하면 다음과 같습니다.
 
-# 1번째 파이프라인
+# 1번째 파이프라인(본 레포 제안 방식)
 
 ```python
 def make_TTS_training_data():
@@ -31,13 +31,13 @@ def make_TTS_training_data():
     #voice_isolation() #적절한 가사들에 대해 MR제거한 목소리 변환
     #save_TTS_training_data()
 
-def voice_synthesis():
-    load_TTS_training_data()
-    train_TTS()
+# def voice_synthesis():
+#     load_TTS_training_data()
+#     train_TTS()
 
 if __name__ == '__main__':
     make_TTS_training_data()
-    voice_synthesis()
+    # voice_synthesis()
 ```
 
 # 2번째 파이프라인 -> STT 성능이 좋지 않아 보류
@@ -118,4 +118,3 @@ if __name__ == '__main__':
     - 상단에서 여러 개의 주피터 노트북 작업 등을 통해 정리한 데이터들을 pickle 파일로 저장해두었다.
     - quick_start.ipynb에서는 pickle 파일을 바로 load하여 OCR로 검출된 부정확한 가사와 크롤링으로 가져온 정확한 가사를 자동으로 일치화시키는 작업을 진행한다.(Not Finished)
     - 정확한 가사와 OCR 가사를 최대한 일치시키며 맞춤법 검사 등을 통해 부정확한 가사가 없도록 설정한다
-
