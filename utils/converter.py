@@ -1,9 +1,11 @@
-import os
 import glob
-from pydub import AudioSegment
+import os
 import re
 
-def mp4_to_mp3(download_path:str):
+from pydub import AudioSegment
+
+
+def mp4_to_mp3(download_path: str):
     """Convert a single mp4 file into a mp3 file.
 
     Args:
@@ -17,9 +19,10 @@ def mp4_to_mp3(download_path:str):
                 os.rename(x, filename[0] + ".mp3")
             except:
                 pass
-    print('youtube mp4 to mp3 convert complete')
+    print("youtube mp4 to mp3 convert complete")
 
-def youtube_mp3_to_wav(src:str, dst:str=None):
+
+def youtube_mp3_to_wav(src: str, dst: str = None):
     """Convert a single mp3 file into a wav format file.
 
     Note:
@@ -42,8 +45,8 @@ def youtube_mp3_to_wav(src:str, dst:str=None):
     if not dst:
         directory, filename = os.path.split(src)
         filename, ext = os.path.splitext(filename)
-        filename = re.sub(r'[^가-힣]', '', filename)
-        filename = re.sub(' ', '', filename)
-        dst = os.path.join(directory, filename + '.wav')
+        filename = re.sub(r"[^가-힣]", "", filename)
+        filename = re.sub(" ", "", filename)
+        dst = os.path.join(directory, filename + ".wav")
     sound.export(dst, format="wav")
-    print('youtube mp3 to wav convert complete')
+    print("youtube mp3 to wav convert complete")
