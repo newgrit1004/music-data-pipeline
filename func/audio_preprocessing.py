@@ -1,11 +1,13 @@
-from pydub.silence import detect_nonsilent
-from pydub import AudioSegment
-from typing import List, Dict, Any
 import os
-from utils.utils import makedirs
 from pathlib import Path
+from typing import Any, Dict, List
 
-def normalize_amplitude(sound:AudioSegment, target_dBFS:float)->AudioSegment:
+from pydub import AudioSegment
+from pydub.silence import detect_nonsilent
+from utils.utils import makedirs, time_measure
+
+
+def normalize_amplitude(sound: AudioSegment, target_dBFS: float) -> AudioSegment:
     """Achieve normalization of peak volume.
 
     Args:
@@ -20,7 +22,7 @@ def normalize_amplitude(sound:AudioSegment, target_dBFS:float)->AudioSegment:
     return sound.apply_gain(change_in_dBFS)
 
 
-def get_time_segments(audio_file:AudioSegment, criterion:int)->List[Dict[str, Any]]:
+def get_time_segments(audio_file: AudioSegment, criterion: int) -> List[Dict[str, Any]]:
     """Achieve normalization of peak volume.
 
     Args:
@@ -42,32 +44,41 @@ def get_time_segments(audio_file:AudioSegment, criterion:int)->List[Dict[str, An
 
     min_silence_length = 70
 
-    #주어진 오디오의 모든 nonsilience segment의 시작점과 끝점을 가져온다.
-    #silence_thresh = the upper bound for how quiet is slient in dBFS
-    intervals = detect_nonsilent(audio_file,
-                               min_silence_len=min_silence_length,
-                               silence_thresh=-32.64)
-
+    # 주어진 오디오의 모든 nonsilience segment의 시작점과 끝점을 가져온다.
+    # silence_thresh = the upper bound for how quiet is slient in dBFS
+    intervals = detect_nonsilent(
+        audio_file, min_silence_len=min_silence_length, silence_thresh=-32.64
+    )
 
     if intervals[0][0] != 0:
-        intervals_jsons.append({'start':0,'end':intervals[0][0],'tag':'silence'})
+        intervals_jsons.append({"start": 0, "end": intervals[0][0], "tag": "silence"})
 
     non_silence_start, before_silence_start = intervals[0][0], intervals[0][1]
 
     for interval in intervals:
         if (interval[0] - before_silence_start) >= criterion:
-            intervals_jsons.append({'start':non_silence_start,'end':(before_silence_start+200),'tag':'nonsilence'})
-            non_silence_start = interval[0]-200
-            intervals_jsons.append({'start':before_silence_start,'end':interval[0],'tag':'silence'})
+            intervals_jsons.append(
+                {
+                    "start": non_silence_start,
+                    "end": (before_silence_start + 200),
+                    "tag": "nonsilence",
+                }
+            )
+            non_silence_start = interval[0] - 200
+            intervals_jsons.append(
+                {"start": before_silence_start, "end": interval[0], "tag": "silence"}
+            )
         before_silence_start = interval[1]
 
     if non_silence_start != len(audio_file):
-        intervals_jsons.append({'start':non_silence_start,'end':len(audio_file),'tag':'nonsilence'})
+        intervals_jsons.append(
+            {"start": non_silence_start, "end": len(audio_file), "tag": "nonsilence"}
+        )
 
     return intervals_jsons
 
 
-def voice_isolation(wav_file:str, stems:int=2):
+def voice_isolation(wav_file: str, stems: int = 2):
     """Isolate vocal and MR using spleeter.
 
     Args:
@@ -77,15 +88,18 @@ def voice_isolation(wav_file:str, stems:int=2):
     TODO:
         * make exception of stems.
     """
-    output_directory = './vocal_isolation'
-    command = r'spleeter separate -p spleeter:' + \
-    str(stems)+f'stems -o {output_directory} '+wav_file
+    output_directory = "./vocal_isolation"
+    command = (
+        r"spleeter separate -p spleeter:"
+        + str(stems)
+        + f"stems -o {output_directory} "
+        + wav_file
+    )
     print(command)
     os.system(command)
 
 
-
-def nonsilence_segmentation(vocal_wav:str):
+def nonsilence_segmentation(vocal_wav: str):
     """Get nonsilence segmenations for a given song
 
     Args:
@@ -105,13 +119,15 @@ def nonsilence_segmentation(vocal_wav:str):
     sound = AudioSegment.from_file(vocal_wav, "wav")
     normalized_sound = normalize_amplitude(sound, -20.0)
     interval_jsons = get_time_segments(normalized_sound, 1500)
-    song_name = os.path.dirname(vocal_wav).split('/')[2]
-    dir_name = Path(f'TTS_training_data/{song_name}')
+    song_name = os.path.dirname(vocal_wav).split("/")[2]
+    dir_name = Path(f"TTS_training_data/{song_name}")
     saved_path = makedirs(dir_name)
 
     for json in interval_jsons:
-        if json['tag'] == 'nonsilence':
-            start = json['start']
-            end = json['end']
-            file_name = f'{song_name}_{start}_{end}.wav'
-            normalized_sound[start:end].export(os.path.join(saved_path, file_name), format='wav')
+        if json["tag"] == "nonsilence":
+            start = json["start"]
+            end = json["end"]
+            file_name = f"{song_name}_{start}_{end}.wav"
+            normalized_sound[start:end].export(
+                os.path.join(saved_path, file_name), format="wav"
+            )
