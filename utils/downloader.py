@@ -2,7 +2,7 @@ import os
 
 from pytube import Playlist, YouTube
 
-# from utils.utils import makedirs
+from utils.utils import makedirs
 
 
 class YoutubeSongDownloader:
@@ -55,39 +55,40 @@ class YoutubeVideoDownloader:
         print("Single song downloaded complete")
 
 
-# TODO: makedirs 부분 수정 필요.
-# class PlaylistDownloader:
-#     """Download all songs of the playlist from youtube playlist url.
+class PlaylistDownloader:
+    """Download all songs of the playlist from youtube playlist url.
 
-#     Attributes:
-#         self.pl (Playlist): a Playlist object
-#     """
+    Attributes:
+        self.pl (Playlist): a Playlist object
+    TODO:
+        makedirs 부분 수정 필요.
+    """
 
-#     def __init__(self, url: str):
-#         """Inits PlaylistSongDownloader with youtube playlist url."""
-#         self.pl = Playlist(url)
-#         print(f"Total number of the videos : {len(self.pl.video_urls)}")
+    def __init__(self, url: str):
+        """Inits PlaylistSongDownloader with youtube playlist url."""
+        self.pl = Playlist(url)
+        print(f"Total number of the videos : {len(self.pl.video_urls)}")
 
-#     def download(self, download_folder_name: str):
-#         """Download songs from the playlist url.
+    def download(self, download_folder_name: str):
+        """Download songs from the playlist url.
 
-#         Args:
-#             download_folder_name (str): a folder path where songs will be downloaded.
+        Args:
+            download_folder_name (str): a folder path where songs will be downloaded.
 
-#         Raises:
-#             VideoUnavailable : loading single video error.
-#             KeyError : 'streamingData' for video removed for violating youtube's terms of service.
-#         """
-#         _ = makedirs(download_folder_name)
-#         for url in self.pl.video_urls:
-#             try:
-#                 video = YouTube(url)
-#             except VideoUnavailable:
-#                 pass
-#             else:
-#                 try:
-#                     video.streams.filter(only_audio=True).first().download(
-#                         f"./{download_folder_name}"
-#                     )
-#                 except KeyError:
-#                     pass
+        Raises:
+            VideoUnavailable : loading single video error.
+            KeyError : 'streamingData' for video removed for violating youtube's terms of service.
+        """
+        _ = makedirs(download_folder_name)
+        for url in self.pl.video_urls:
+            try:
+                video = YouTube(url)
+            except VideoUnavailable:
+                pass
+            else:
+                try:
+                    video.streams.filter(only_audio=True).first().download(
+                        f"./{download_folder_name}"
+                    )
+                except KeyError:
+                    pass
